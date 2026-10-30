@@ -195,13 +195,27 @@ function recomputeTargets() {
 
   document.getElementById('cobroDate').textContent = fmtLargo(cobroTarget);
   document.getElementById('aguiDate').textContent = fmtLargo(aguiTarget);
-  document.getElementById('cobroDiasBig').textContent = cd <= 0 ? '¡hoy!' : cd === 1 ? '1 día' : `${cd} días`;
-  document.getElementById('aguiDiasBig').textContent = ad <= 0 ? '¡hoy!' : ad === 1 ? '1 día' : `${ad} días`;
+  setTituloFalta('cobroTitle', 'cobroDiasBig', cd, '¡Hoy es el día!');
+  setTituloFalta('aguiTitle', 'aguiDiasBig', ad, '¡Llegó el aguinaldo!');
   document.getElementById('cobroHint').textContent = fraseDelDia(cd);
   document.getElementById('aguiHint').textContent = fraseAgui(ad);
   document.getElementById('cobroBadge').textContent = badgeTxt(cd);
   document.getElementById('aguiBadge').textContent = badgeTxt(ad);
 }
+// Arma el título: "Falta X días" normalmente, o solo el mensaje cuando es hoy.
+function setTituloFalta(titleId, numId, dias, mensajeHoy) {
+  const title = document.getElementById(titleId);
+  const pre = title.querySelector('.pre');
+  const num = document.getElementById(numId);
+  if (dias <= 0) {
+    if (pre) pre.style.display = 'none';           // sacamos el "Falta "
+    num.textContent = mensajeHoy;                   // mostramos solo el mensaje
+  } else {
+    if (pre) pre.style.display = '';                // volvemos a mostrar "Falta "
+    num.textContent = dias === 1 ? '1 día' : `${dias} días`;
+  }
+}
+
 function clampInt(v, min, max, def) { const n = parseInt(v, 10); return isNaN(n) ? def : Math.min(max, Math.max(min, n)); }
 
 // ----- tick -----
