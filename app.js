@@ -193,8 +193,6 @@ function recomputeTargets() {
   const cd = diasHasta(cobroTarget);
   const ad = diasHasta(aguiTarget);
 
-  document.getElementById('cobroDate').textContent = fmtLargo(cobroTarget);
-  document.getElementById('aguiDate').textContent = fmtLargo(aguiTarget);
   setTituloFalta('cobroTitle', 'cobroDiasBig', cd, '¡Hoy es el día!');
   setTituloFalta('aguiTitle', 'aguiDiasBig', ad, '¡Llegó el aguinaldo!');
   document.getElementById('cobroHint').textContent = fraseDelDia(cd);
@@ -250,7 +248,7 @@ function refreshNotifBtn() {
 }
 
 notifBtn.addEventListener('click', async () => {
-  if (!supportsNotif()) { toast('Tu navegador no soporta notificaciones.'); return; }
+  if (!supportsNotif()) { alert('Tu navegador no soporta notificaciones.'); return; }
   if (Notification.permission === 'granted') {
     notify('Todo listo', 'Te avisamos cuando se acerque el cobro o el aguinaldo.');
     return;
@@ -258,7 +256,7 @@ notifBtn.addEventListener('click', async () => {
   const perm = await Notification.requestPermission();
   refreshNotifBtn();
   if (perm === 'granted') notify('Avisos activados', 'Te avisamos unos días antes de cobrar.');
-  else toast('Dale permiso de notificaciones para recibir avisos.');
+  else alert('Dale permiso de notificaciones para recibir avisos.');
 });
 
 function notify(title, body) {
@@ -267,7 +265,6 @@ function notify(title, body) {
       new Notification(title, { body, icon: 'img/nutria-chambeadora.jpg', tag: 'nutrias', renotify: false });
     }
   } catch (e) {}
-  toast(`${title} — ${body}`);
 }
 
 function maybeNotify() {
@@ -287,16 +284,6 @@ function maybeNotify() {
   ];
   checks.forEach((x) => { if (x.c && !sent[x.k]) { notify(x.t, x.b); sent[x.k] = true; } });
   try { localStorage.setItem('nc-notified', JSON.stringify(sent)); } catch (e) {}
-}
-
-// ----- toast -----
-let toastTimer = null;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
 }
 
 // ----- init -----

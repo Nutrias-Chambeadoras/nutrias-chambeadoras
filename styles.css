@@ -120,8 +120,6 @@ main { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; paddin
 .track { height: 9px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); overflow: hidden; margin-bottom: 14px; }
 .track-fill { display: block; height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--teal-d), var(--teal)); transition: width .7s ease; }
 .track-fill.alt { background: linear-gradient(90deg, var(--amber), var(--gold)); }
-.when { font-size: 0.9rem; color: var(--muted); }
-.when strong { color: var(--text); font-weight: 600; }
 
 /* arte / nutria */
 .hero-art { position: relative; display: grid; place-items: center; min-height: 230px; }
@@ -151,17 +149,6 @@ main { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; paddin
 .foot p { font-family: 'Sora', sans-serif; font-weight: 700; }
 .foot-mini { color: var(--muted); font-size: 0.85rem; }
 
-/* ---------- Toast ---------- */
-.toast {
-  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 160%);
-  background: var(--surface-2); color: var(--text); border: 1px solid var(--teal);
-  padding: 14px 20px; border-radius: 14px; font-size: 0.92rem; font-weight: 500;
-  max-width: 90vw; text-align: center; z-index: 50;
-  box-shadow: 0 20px 50px -15px rgba(0,0,0,0.7);
-  transition: transform .4s cubic-bezier(.2,.8,.2,1);
-}
-.toast.show { transform: translate(-50%, 0); }
-
 /* ---------- Responsive ---------- */
 
 /* Tablet y abajo: hero en una sola columna, imagen arriba y todo centrado */
@@ -172,7 +159,6 @@ main { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; paddin
   .eyebrow { align-self: center; }
   .count { justify-content: center; }
   .hero-phrase { margin-left: auto; margin-right: auto; }
-  .when { text-align: center; }
 }
 
 /* Móvil grande */
