@@ -15,7 +15,7 @@
     { "fecha": "12-25", "nombre": "Navidad",                       "descripcion": "Celebración del nacimiento de Jesucristo." }
   ],
   "especiales": {
-    "aguinaldo": { "fecha": "12-16", "nombre": "Aguinaldo",     "descripcion": "El medio sueldo de fin de año." },
+    "aguinaldo": { "fecha": "12-18", "nombre": "Aguinaldo",     "descripcion": "El medio sueldo de fin de año." },
     "canasta":   { "fecha": "12-20", "nombre": "Canasta",       "descripcion": "Llega la canasta navideña." },
     "fiesta":    { "fecha": "12-21", "nombre": "Fiesta de fin de año", "descripcion": "A festejar con el equipo." }
   }
