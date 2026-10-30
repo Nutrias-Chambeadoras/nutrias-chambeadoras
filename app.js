@@ -35,68 +35,114 @@ const DIAS  = ['domingo','lunes','martes','miércoles','jueves','viernes','sába
 
 // ----- utilidades de fecha -----
 const pad = (n) => String(n).padStart(2, '0');
-const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const atMidnight = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
-function feriadoSet(year) {
-  // devuelve un Set de 'YYYY-MM-DD' para ese año
-  const s = new Set();
-  FERIADOS.forEach((f) => {
-    const [m, d] = f.md.split('-').map(Number);
-    s.add(`${year}-${pad(m)}-${pad(d)}`);
+// Zona horaria objetivo: todo el cálculo se hace en hora de Paraguay,
+// así el contador marca las 21:00 de Asunción se abra desde donde se abra.
+const TZ = 'America/Asuncion';
+
+// Devuelve { year, month(0-11), day, hour, minute } del instante dado,
+// expresado en hora de Paraguay.
+function tzParts(date) {
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
   });
-  return s;
+  const p = {};
+  fmt.formatToParts(date).forEach((x) => { if (x.type !== 'literal') p[x.type] = x.value; });
+  let hour = parseInt(p.hour, 10);
+  if (hour === 24) hour = 0; // algunos motores devuelven 24 a medianoche
+  return {
+    year: +p.year, month: +p.month - 1, day: +p.day,
+    hour, minute: +p.minute, second: +p.second,
+  };
 }
-function isHoliday(d) { return feriadoSet(d.getFullYear()).has(iso(d)); }
-function isWeekend(d) { const g = d.getDay(); return g === 0 || g === 6; }
-function isNonWorking(d) { return isWeekend(d) || isHoliday(d); }
 
-function adjustPayDate(date, shift) {
-  const d = atMidnight(date);
-  if (shift === 'none') return d;
+// Timestamp UTC (ms) del momento "year-month-day hour:00 hora de Paraguay".
+// Resuelve el offset real de Asunción en esa fecha (contempla horario de verano).
+function asuncionTime(year, month, day, hour = 0, minute = 0) {
+  // Punto de partida: ese instante interpretado como si fuera UTC.
+  const guess = Date.UTC(year, month, day, hour, minute, 0);
+  // Cuánto se desvía la hora de Paraguay respecto de UTC en esa fecha.
+  const parts = tzParts(new Date(guess));
+  const asUTC = Date.UTC(parts.year, parts.month, parts.day, parts.hour, parts.minute, 0);
+  const offset = asUTC - guess;      // ms que Paraguay va por delante de UTC
+  return new Date(guess - offset);   // corrige para obtener el UTC correcto
+}
+
+// Trabajamos los días como objetos { y, m, d } en el calendario de Paraguay.
+function isHolidayYMD(y, m, d) {
+  return FERIADOS.some((f) => {
+    const [fm, fd] = f.md.split('-').map(Number);
+    return fm === m + 1 && fd === d;
+  });
+}
+function isNonWorkingYMD(y, m, d) {
+  const wd = new Date(Date.UTC(y, m, d)).getUTCDay();
+  return wd === 0 || wd === 6 || isHolidayYMD(y, m, d);
+}
+
+// Ajusta un día (y,m,d) saltando feriados/findes según la preferencia.
+function adjustDay(y, m, d, shift) {
+  if (shift === 'none') return { y, m, d };
   const step = shift === 'after' ? 1 : -1;
-  while (isNonWorking(d)) d.setDate(d.getDate() + step);
-  return d;
+  let cur = new Date(Date.UTC(y, m, d));
+  while (isNonWorkingYMD(cur.getUTCFullYear(), cur.getUTCMonth(), cur.getUTCDate())) {
+    cur.setUTCDate(cur.getUTCDate() + step);
+  }
+  return { y: cur.getUTCFullYear(), m: cur.getUTCMonth(), d: cur.getUTCDate() };
 }
 function lastDayOfMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
 
-function nextPayDate(payDay, shift) {
-  const now = new Date();
-  const today = atMidnight(now);
+// Próximo cobro: a las payHour:00 de Paraguay del día de pago (ajustado).
+function nextPayDate(payDay, shift, payHour) {
+  const now = tzParts(new Date());
+  const nowTs = Date.now();
   for (let i = 0; i < 14; i++) {
-    const base = now.getMonth() + i;
-    const year = now.getFullYear() + Math.floor(base / 12);
+    const base = now.month + i;
+    const year = now.year + Math.floor(base / 12);
     const month = ((base % 12) + 12) % 12;
     const realDay = Math.min(payDay, lastDayOfMonth(year, month));
-    const adjusted = adjustPayDate(new Date(year, month, realDay), shift);
-    if (adjusted.getTime() >= today.getTime()) return adjusted;
+    const a = adjustDay(year, month, realDay, shift);
+    const target = asuncionTime(a.y, a.m, a.d, payHour, 0);
+    if (target.getTime() > nowTs) return target;
   }
-  return adjustPayDate(new Date(now.getFullYear(), now.getMonth() + 1, payDay), shift);
+  const a = adjustDay(now.year, now.month + 1, payDay, shift);
+  return asuncionTime(a.y, a.m, a.d, payHour, 0);
 }
-function nextAguinaldoDate(month, day, shift) {
-  const now = new Date();
-  const today = atMidnight(now);
+
+// Próximo aguinaldo: a las payHour:00 de Paraguay del día (ajustado).
+function nextAguinaldoDate(month, day, shift, payHour) {
+  const now = tzParts(new Date());
+  const nowTs = Date.now();
   for (let y = 0; y <= 1; y++) {
-    const year = now.getFullYear() + y;
+    const year = now.year + y;
     const realDay = Math.min(day, lastDayOfMonth(year, month));
-    const adjusted = adjustPayDate(new Date(year, month, realDay), shift);
-    if (adjusted.getTime() >= today.getTime()) return adjusted;
+    const a = adjustDay(year, month, realDay, shift);
+    const target = asuncionTime(a.y, a.m, a.d, payHour, 0);
+    if (target.getTime() > nowTs) return target;
   }
-  return adjustPayDate(new Date(now.getFullYear() + 1, month, day), shift);
+  const a = adjustDay(now.year + 1, month, day, shift);
+  return asuncionTime(a.y, a.m, a.d, payHour, 0);
 }
 
-function fmtLargo(d) { return `${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`; }
-function diasHasta(target) { return Math.ceil((atMidnight(target) - atMidnight(new Date())) / 86400000); }
-
-// ----- config persistida -----
-const DEFAULTS = { payDay: 30, payShift: 'before', aguiMonth: 11, aguiDay: 16 };
-function loadConfig() {
-  try { const raw = localStorage.getItem('nc-config'); if (raw) return { ...DEFAULTS, ...JSON.parse(raw) }; } catch (e) {}
-  return { ...DEFAULTS };
+function fmtLargo(d) {
+  const p = tzParts(d);
+  const wd = new Date(Date.UTC(p.year, p.month, p.day)).getUTCDay();
+  return `${DIAS[wd]} ${p.day} de ${MESES[p.month]}`;
 }
-function saveConfig(c) { try { localStorage.setItem('nc-config', JSON.stringify(c)); } catch (e) {} }
+// Días restantes contando por días de calendario de Paraguay.
+function diasHasta(target) {
+  const t = tzParts(target);
+  const n = tzParts(new Date());
+  const tMid = Date.UTC(t.year, t.month, t.day);
+  const nMid = Date.UTC(n.year, n.month, n.day);
+  return Math.round((tMid - nMid) / 86400000);
+}
 
-let config = loadConfig();
+// ----- configuración fija -----
+// payHour: hora de cobro en Paraguay (21 = 21:00). aguiDay: día del aguinaldo.
+const config = { payDay: 30, payShift: 'before', payHour: 21, aguiMonth: 11, aguiDay: 18 };
+
 let cobroTarget = null, aguiTarget = null, periodStart = null;
 
 // ----- render -----
@@ -139,9 +185,10 @@ function recompute() {
   tick();
 }
 function recomputeTargets() {
-  cobroTarget = nextPayDate(config.payDay, config.payShift);
-  aguiTarget = nextAguinaldoDate(config.aguiMonth, config.aguiDay, config.payShift);
-  periodStart = new Date(cobroTarget.getFullYear(), cobroTarget.getMonth() - 1, cobroTarget.getDate());
+  cobroTarget = nextPayDate(config.payDay, config.payShift, config.payHour);
+  aguiTarget = nextAguinaldoDate(config.aguiMonth, config.aguiDay, config.payShift, config.payHour);
+  // referencia para la barra de progreso: 30 días antes del cobro
+  periodStart = new Date(cobroTarget.getTime() - 30 * 86400000);
 
   const cd = diasHasta(cobroTarget);
   const ad = diasHasta(aguiTarget);
@@ -211,7 +258,8 @@ function notify(title, body) {
 
 function maybeNotify() {
   if (!supportsNotif() || Notification.permission !== 'granted') return;
-  const key = iso(new Date());
+  const n = tzParts(new Date());
+  const key = `${n.year}-${pad(n.month + 1)}-${pad(n.day)}`; // día de Paraguay
   let sent = {};
   try { sent = JSON.parse(localStorage.getItem('nc-notified') || '{}'); } catch (e) {}
   const cd = diasHasta(cobroTarget);
