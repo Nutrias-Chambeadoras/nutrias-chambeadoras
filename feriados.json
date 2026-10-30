@@ -1,0 +1,22 @@
+{
+  "feriados": [
+    { "fecha": "1-1",   "nombre": "Año Nuevo",                      "descripcion": "Celebración del inicio del año." },
+    { "fecha": "3-1",   "nombre": "Día de los Héroes",             "descripcion": "Homenaje a los héroes de la patria." },
+    { "fecha": "4-2",   "nombre": "Jueves Santo",                  "descripcion": "Asueto de Semana Santa (2026)." },
+    { "fecha": "4-3",   "nombre": "Viernes Santo",                 "descripcion": "Semana Santa (2026)." },
+    { "fecha": "5-1",   "nombre": "Día del Trabajador",            "descripcion": "Día internacional de los trabajadores." },
+    { "fecha": "5-14",  "nombre": "Día de la Independencia",       "descripcion": "Primer día de la conmemoración patria." },
+    { "fecha": "5-15",  "nombre": "Día de la Independencia",       "descripcion": "Conmemoración de la independencia del Paraguay." },
+    { "fecha": "6-12",  "nombre": "Paz del Chaco",                 "descripcion": "Conmemoración del fin de la Guerra del Chaco." },
+    { "fecha": "6-20",  "nombre": "Jura de la Constitución",       "descripcion": "Feriado nacional nuevo desde 2026." },
+    { "fecha": "8-15",  "nombre": "Fundación de Asunción",         "descripcion": "Aniversario de la fundación de la ciudad de Asunción." },
+    { "fecha": "9-29",  "nombre": "Victoria de Boquerón",          "descripcion": "Conmemoración de la victoria en la Batalla de Boquerón." },
+    { "fecha": "12-8",  "nombre": "Virgen de Caacupé",             "descripcion": "Día de la Virgen de Caacupé." },
+    { "fecha": "12-25", "nombre": "Navidad",                       "descripcion": "Celebración del nacimiento de Jesucristo." }
+  ],
+  "especiales": {
+    "aguinaldo": { "fecha": "12-16", "nombre": "Aguinaldo",     "descripcion": "El medio sueldo de fin de año." },
+    "canasta":   { "fecha": "12-20", "nombre": "Canasta",       "descripcion": "Llega la canasta navideña." },
+    "fiesta":    { "fecha": "12-21", "nombre": "Fiesta de fin de año", "descripcion": "A festejar con el equipo." }
+  }
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0e1413" />
+  <title>Nutrias Chambeadoras</title>
+  <meta name="description" content="¿Cuánto falta para cobrar y para el aguinaldo?" />
+  <link rel="icon" type="image/jpeg" href="img/nutria-chambeadora.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="aurora"></div>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="brand">
+      <img src="img/nutria-chambeadora.jpg" alt="" class="brand-img" />
+      <span>Nutrias Chambeadoras</span>
+    </div>
+    <button id="notifBtn" class="btn-notif" type="button">
+      <span class="dot"></span> Activar avisos
+    </button>
+  </header>
+
+  <main>
+    <!-- SUELDO -->
+    <section id="sueldo" class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Cuando cobramos</p>
+        <h1 class="hero-title">Falta <span class="glow" id="cobroDiasBig">—</span></h1>
+        <p class="hero-phrase" id="cobroHint">Aguarda el salario con emoción.</p>
+
+        <div class="count" id="cobroCountdown">
+          <div class="unit"><span class="num" data-u="d">00</span><span class="lbl">días</span></div>
+          <div class="unit"><span class="num" data-u="h">00</span><span class="lbl">horas</span></div>
+          <div class="unit"><span class="num" data-u="m">00</span><span class="lbl">min</span></div>
+          <div class="unit"><span class="num" data-u="s">00</span><span class="lbl">seg</span></div>
+        </div>
+
+        <div class="track"><span class="track-fill" id="cobroBar"></span></div>
+        <p class="when">Próximo pago · <strong id="cobroDate">—</strong></p>
+      </div>
+      <div class="hero-art">
+        <div class="art-ring"></div>
+        <img src="img/nutria-chambeadora.jpg" alt="Nutria chambeadora esperando el sueldo" class="nutria" />
+        <span class="art-badge" id="cobroBadge">—</span>
+      </div>
+    </section>
+
+    <!-- AGUINALDO -->
+    <section id="aguinaldo" class="hero reverse">
+      <div class="hero-copy">
+        <p class="eyebrow alt">El aguinaldo</p>
+        <h1 class="hero-title">Falta <span class="glow alt" id="aguiDiasBig">—</span></h1>
+        <p class="hero-phrase" id="aguiHint">Ya falta menos para el medio sueldo.</p>
+
+        <div class="count" id="aguiCountdown">
+          <div class="unit"><span class="num" data-u="d">00</span><span class="lbl">días</span></div>
+          <div class="unit"><span class="num" data-u="h">00</span><span class="lbl">horas</span></div>
+          <div class="unit"><span class="num" data-u="m">00</span><span class="lbl">min</span></div>
+          <div class="unit"><span class="num" data-u="s">00</span><span class="lbl">seg</span></div>
+        </div>
+
+        <div class="track"><span class="track-fill alt" id="aguiBar"></span></div>
+        <p class="when">Se cobra · <strong id="aguiDate">—</strong></p>
+      </div>
+      <div class="hero-art">
+        <div class="art-ring alt"></div>
+        <img src="img/nutria-aguinaldo.jpg" alt="Nutria festejando el aguinaldo" class="nutria" />
+        <span class="art-badge alt" id="aguiBadge">—</span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <img src="img/nutria-chambeadora.jpg" alt="" class="foot-img" />
+    <p>Nutrias Chambeadoras</p>
+    <span class="foot-mini">Aguantá, que ya falta menos · <span id="year"></span></span>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
