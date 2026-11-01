@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Nutrias Chambeadoras</title>
+  <style>
+    :root { --teal:#1de9b6; --bg:#0e1413; --surface:#16211e; --line:rgba(29,233,182,.14); --text:#eafdf7; --muted:#8fb3aa; --red:#ff6b6b; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding:28px 18px 60px; line-height:1.5; }
+    .wrap { max-width:640px; margin:0 auto; }
+    h1 { font-size:1.5rem; margin-bottom:6px; }
+    .sub { color:var(--muted); margin-bottom:26px; font-size:.95rem; }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:24px; margin-bottom:20px; }
+    label { display:block; margin-bottom:18px; }
+    label > span { display:block; font-size:.85rem; color:var(--muted); margin-bottom:8px; }
+    .switch { display:flex; align-items:center; gap:12px; cursor:pointer; }
+    .switch input { width:22px; height:22px; accent-color:var(--teal); }
+    .switch b { font-size:1.05rem; }
+    input[type=text] { width:100%; background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--text); font-family:inherit; font-size:1rem; }
+    input[type=text]:focus { outline:none; border-color:var(--teal); }
+    .out { background:var(--bg); border:1px dashed var(--line); border-radius:12px; padding:16px; font-family:ui-monospace,monospace; font-size:.9rem; white-space:pre-wrap; word-break:break-word; color:var(--teal); }
+    .btn { font-family:inherit; font-weight:600; font-size:.95rem; border:none; border-radius:999px; padding:12px 22px; cursor:pointer; background:var(--teal); color:#06100d; margin-top:14px; }
+    .btn:active { transform:translateY(1px); }
+    .state { display:inline-block; margin-left:10px; font-size:.85rem; color:var(--muted); }
+    .steps { color:var(--muted); font-size:.9rem; }
+    .steps li { margin:6px 0; }
+    code { background:var(--bg); padding:2px 6px; border-radius:6px; color:var(--teal); }
+    .preview-red { color:var(--red); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Panel de cobro 🦦</h1>
+    <p class="sub">Marcá acá cuando el cobro se atrasa. Después copiás el resultado en <code>estado.json</code> y lo subís.</p>
+
+    <div class="card">
+      <label class="switch">
+        <input type="checkbox" id="atrasado" />
+        <b>Todavía no cobramos <span class="preview-red">(mostrar nutria triste)</span></b>
+      </label>
+
+      <label>
+        <span>Mensaje opcional (se muestra en el banner)</span>
+        <input type="text" id="mensaje" placeholder="Ej: el cobro se atrasó 2 días, aguanten 😭" />
+      </label>
+    </div>
+
+    <div class="card">
+      <span style="font-size:.85rem;color:var(--muted)">Contenido para <code>estado.json</code>:</span>
+      <div class="out" id="salida"></div>
+      <button class="btn" id="copiar">Copiar</button>
+      <span class="state" id="estadoCopia"></span>
+    </div>
+
+    <div class="card">
+      <strong>Cómo publicarlo</strong>
+      <ol class="steps">
+        <li>Copiá el texto de arriba.</li>
+        <li>Pegalo en el archivo <code>estado.json</code> (reemplazando todo).</li>
+        <li>Guardá, commiteá y subí a GitHub (<code>git push</code>).</li>
+        <li>En ~1 minuto el sitio se actualiza solo.</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const atrasado = document.getElementById('atrasado');
+    const mensaje = document.getElementById('mensaje');
+    const salida = document.getElementById('salida');
+    const estadoCopia = document.getElementById('estadoCopia');
+
+    // Precargar el estado actual si existe
+    fetch('estado.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) { atrasado.checked = d.atrasado === true; mensaje.value = d.mensaje || ''; } render(); })
+      .catch(() => render());
+
+    function render() {
+      const obj = {
+        atrasado: atrasado.checked,
+        mensaje: mensaje.value.trim(),
+        actualizado: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      };
+      salida.textContent = JSON.stringify(obj, null, 2);
+    }
+
+    atrasado.addEventListener('change', render);
+    mensaje.addEventListener('input', render);
+
+    document.getElementById('copiar').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(salida.textContent);
+        estadoCopia.textContent = '¡Copiado! ✅';
+      } catch (e) {
+        estadoCopia.textContent = 'Seleccioná y copiá manualmente.';
+      }
+      setTimeout(() => (estadoCopia.textContent = ''), 2500);
+    });
+  </script>
+</body>
+</html>

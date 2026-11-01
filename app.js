@@ -180,6 +180,41 @@ function badgeTxt(dias) {
   return `en ${dias} días`;
 }
 
+// ----- estado manual (admin): "todavía no cobramos" -----
+let atraso = { activo: false, mensaje: '' };
+
+// Lee estado.json (con cache-busting) y aplica el modo triste si corresponde.
+async function cargarEstado() {
+  try {
+    const res = await fetch('estado.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    atraso.activo = data.atrasado === true;   // única bandera: true = todavía no cobramos
+    atraso.mensaje = data.mensaje || '';
+  } catch (e) {
+    // si no se puede leer, no forzamos nada (modo normal)
+  }
+  aplicarEstado();
+}
+
+// Pinta/despinta el modo triste según la bandera.
+function aplicarEstado() {
+  const art = document.getElementById('cobroArt');
+  const banner = document.getElementById('atrasoBanner');
+  const msg = document.getElementById('atrasoMsg');
+  if (!art || !banner) return;
+
+  if (atraso.activo) {
+    art.classList.add('atrasado');
+    banner.hidden = false;
+    msg.textContent = atraso.mensaje || 'El cobro se atrasó unos días. Aguantá que ya llega.';
+    document.getElementById('cobroBadge').textContent = 'atrasado';
+  } else {
+    art.classList.remove('atrasado');
+    banner.hidden = true;
+  }
+}
+
 function recompute() {
   recomputeTargets();
   tick();
@@ -199,6 +234,9 @@ function recomputeTargets() {
   document.getElementById('aguiHint').textContent = fraseAgui(ad);
   document.getElementById('cobroBadge').textContent = badgeTxt(cd);
   document.getElementById('aguiBadge').textContent = badgeTxt(ad);
+
+  // si el admin marcó "todavía no cobramos", reafirma el modo triste
+  if (typeof atraso !== 'undefined' && atraso.activo) aplicarEstado();
 }
 // Arma el título: "Falta X días" normalmente, o solo el mensaje cuando es hoy.
 function setTituloFalta(titleId, numId, dias, mensajeHoy) {
@@ -291,6 +329,8 @@ function init() {
   document.getElementById('year').textContent = new Date().getFullYear();
   refreshNotifBtn();
   recompute();
+  cargarEstado();                          // lee estado.json al inicio
   setInterval(tick, 1000);
+  setInterval(cargarEstado, 60000);        // y revisa cada minuto por si cambió
 }
 document.addEventListener('DOMContentLoaded', init);
