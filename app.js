@@ -254,8 +254,28 @@ function setTituloFalta(titleId, numId, dias, mensajeHoy) {
 
 function clampInt(v, min, max, def) { const n = parseInt(v, 10); return isNaN(n) ? def : Math.min(max, Math.max(min, n)); }
 
+// ----- intervención: contador que sube -----
+// Martes 3/11/2026 03:24 (GMT-3) = 06:24 UTC
+const INTERVENCION = new Date(Date.UTC(2026, 10, 3, 6, 24, 0));
+
+function renderIntervencion() {
+  const diff = Math.max(Date.now() - INTERVENCION.getTime(), 0);
+  const d = Math.floor(diff / 86400000);
+  const map = {
+    d,
+    h: Math.floor((diff % 86400000) / 3600000),
+    m: Math.floor((diff % 3600000) / 60000),
+    s: Math.floor((diff % 60000) / 1000),
+  };
+  document.querySelectorAll('#intervCountdown .num').forEach((el) => {
+    el.textContent = pad(map[el.dataset.u]);
+  });
+  document.getElementById('intervDiasBig').textContent = d === 1 ? '1 día' : `${d} días`;
+}
+
 // ----- tick -----
 function tick() {
+  renderIntervencion();
   if (!cobroTarget || !aguiTarget) return;
   if (Date.now() > cobroTarget.getTime() || Date.now() > aguiTarget.getTime()) {
     recomputeTargets();

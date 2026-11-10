@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0e1413" />
+  <meta name="theme-color" content="#0d0f12" />
   <title>Nutrias Chambeadoras</title>
   <meta name="description" content="¿Cuánto falta para cobrar y para el aguinaldo?" />
   <link rel="icon" type="image/jpeg" href="img/nutria-chambeadora.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <div class="aurora"></div>
@@ -26,7 +26,30 @@
     </button>
   </header>
 
+  <div class="tape" aria-hidden="true"></div>
+
   <main>
+    <!-- INTERVENIDOS -->
+    <section id="intervenidos" class="hero hero-jail">
+      <div class="hero-copy">
+        <p class="eyebrow">Intervenidos</p>
+        <h1 class="hero-title" id="intervTitle">Llevamos <span class="glow" id="intervDiasBig">—</span> intervenidos</h1>
+        <p class="hero-phrase">Desde el martes 3 de noviembre de 2026, 03:24 (hora de Paraguay). La app se quedó en blanco y todavía no salimos.</p>
+
+        <div class="count" id="intervCountdown">
+          <div class="unit"><span class="num" data-u="d">00</span><span class="lbl">días intervenidos</span></div>
+          <div class="unit"><span class="num" data-u="h">00</span><span class="lbl">horas intervenidas</span></div>
+          <div class="unit"><span class="num" data-u="m">00</span><span class="lbl">minutos intervenidos</span></div>
+          <div class="unit"><span class="num" data-u="s">00</span><span class="lbl">segundos intervenidos</span></div>
+        </div>
+      </div>
+      <div class="hero-art jail">
+        <div class="art-ring"></div>
+        <img src="img/nutria-chambeadora.jpg" alt="Nutria tras las rejas" class="nutria" />
+        <span class="art-badge">tras las rejas</span>
+      </div>
+    </section>
+
     <!-- SUELDO -->
     <section id="sueldo" class="hero">
       <div class="hero-copy">
@@ -86,6 +109,6 @@
     <span class="foot-mini">Aguantá, que ya falta menos · <span id="year"></span></span>
   </footer>
 
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
