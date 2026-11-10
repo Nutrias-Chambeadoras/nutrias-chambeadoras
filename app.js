@@ -215,45 +215,6 @@ function aplicarEstado() {
   }
 }
 
-function recompute() {
-  recomputeTargets();
-  tick();
-}
-function recomputeTargets() {
-  cobroTarget = nextPayDate(config.payDay, config.payShift, config.payHour);
-  aguiTarget = nextAguinaldoDate(config.aguiMonth, config.aguiDay, config.payShift, config.payHour);
-  // referencia para la barra de progreso: 30 días antes del cobro
-  periodStart = new Date(cobroTarget.getTime() - 30 * 86400000);
-
-  const cd = diasHasta(cobroTarget);
-  const ad = diasHasta(aguiTarget);
-
-  setTituloFalta('cobroTitle', 'cobroDiasBig', cd, '¡Hoy es el día!');
-  setTituloFalta('aguiTitle', 'aguiDiasBig', ad, '¡Llegó el aguinaldo!');
-  document.getElementById('cobroHint').textContent = fraseDelDia(cd);
-  document.getElementById('aguiHint').textContent = fraseAgui(ad);
-  document.getElementById('cobroBadge').textContent = badgeTxt(cd);
-  document.getElementById('aguiBadge').textContent = badgeTxt(ad);
-
-  // si el admin marcó "todavía no cobramos", reafirma el modo triste
-  if (typeof atraso !== 'undefined' && atraso.activo) aplicarEstado();
-}
-// Arma el título: "Falta X días" normalmente, o solo el mensaje cuando es hoy.
-function setTituloFalta(titleId, numId, dias, mensajeHoy) {
-  const title = document.getElementById(titleId);
-  const pre = title.querySelector('.pre');
-  const num = document.getElementById(numId);
-  if (dias <= 0) {
-    if (pre) pre.style.display = 'none';           // sacamos el "Falta "
-    num.textContent = mensajeHoy;                   // mostramos solo el mensaje
-  } else {
-    if (pre) pre.style.display = '';                // volvemos a mostrar "Falta "
-    num.textContent = dias === 1 ? '1 día' : `${dias} días`;
-  }
-}
-
-function clampInt(v, min, max, def) { const n = parseInt(v, 10); return isNaN(n) ? def : Math.min(max, Math.max(min, n)); }
-
 // ----- intervención: contador que sube -----
 // Martes 3/11/2026 03:24 (GMT-3) = 06:24 UTC
 const INTERVENCION = new Date(Date.UTC(2026, 10, 3, 6, 24, 0));
@@ -276,15 +237,6 @@ function renderIntervencion() {
 // ----- tick -----
 function tick() {
   renderIntervencion();
-  if (!cobroTarget || !aguiTarget) return;
-  if (Date.now() > cobroTarget.getTime() || Date.now() > aguiTarget.getTime()) {
-    recomputeTargets();
-  }
-  renderCountdown('cobroCountdown', cobroTarget);
-  renderCountdown('aguiCountdown', aguiTarget);
-  setBar('cobroBar', periodStart, cobroTarget);
-  setBar('aguiBar', new Date(aguiTarget.getFullYear(), 0, 1), aguiTarget);
-  maybeNotify();
 }
 
 // ----- notificaciones -----
@@ -348,9 +300,7 @@ function maybeNotify() {
 function init() {
   document.getElementById('year').textContent = new Date().getFullYear();
   refreshNotifBtn();
-  recompute();
-  cargarEstado();                          // lee estado.json al inicio
+  tick();
   setInterval(tick, 1000);
-  setInterval(cargarEstado, 60000);        // y revisa cada minuto por si cambió
 }
 document.addEventListener('DOMContentLoaded', init);

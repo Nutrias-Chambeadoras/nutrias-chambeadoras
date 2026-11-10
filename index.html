@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <div class="aurora"></div>
@@ -54,27 +54,13 @@
     <section id="sueldo" class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Cuando cobramos</p>
-        <h1 class="hero-title" id="cobroTitle"><span class="pre">Falta </span><span class="glow" id="cobroDiasBig">—</span></h1>
-        <p class="hero-phrase" id="cobroHint">Aguarda el salario con emoción.</p>
-        <div class="atraso-banner" id="atrasoBanner" hidden>
-          <strong>Todavía no cobramos 😭</strong>
-          <span id="atrasoMsg"></span>
-        </div>
-
-        <div class="count" id="cobroCountdown">
-          <div class="unit"><span class="num" data-u="d">00</span><span class="lbl">días</span></div>
-          <div class="unit"><span class="num" data-u="h">00</span><span class="lbl">horas</span></div>
-          <div class="unit"><span class="num" data-u="m">00</span><span class="lbl">min</span></div>
-          <div class="unit"><span class="num" data-u="s">00</span><span class="lbl">seg</span></div>
-        </div>
-
-        <div class="track"><span class="track-fill" id="cobroBar"></span></div>
+        <h1 class="hero-title"><span class="glow">Cuando Ueno libere los fondos</span></h1>
+        <p class="hero-phrase">El sueldo no tiene fecha. Sigue congelado hasta nuevo aviso.</p>
       </div>
       <div class="hero-art" id="cobroArt">
         <div class="art-ring"></div>
-        <img src="img/nutria-chambeadora.jpg" alt="Nutria chambeadora esperando el sueldo" class="nutria" id="cobroNutria" />
-        <span class="art-badge" id="cobroBadge">—</span>
-        <span class="art-tear" aria-hidden="true">😢</span>
+        <img src="img/nutria-chambeadora.jpg" alt="Nutria sin sueldo" class="nutria" id="cobroNutria" />
+        <span class="art-badge" id="cobroBadge">congelado</span>
       </div>
     </section>
 
@@ -82,33 +68,23 @@
     <section id="aguinaldo" class="hero reverse">
       <div class="hero-copy">
         <p class="eyebrow alt">El aguinaldo</p>
-        <h1 class="hero-title" id="aguiTitle"><span class="pre alt-pre">Falta </span><span class="glow alt" id="aguiDiasBig">—</span></h1>
-        <p class="hero-phrase" id="aguiHint">Ya falta menos para el medio sueldo.</p>
-
-        <div class="count" id="aguiCountdown">
-          <div class="unit"><span class="num" data-u="d">00</span><span class="lbl">días</span></div>
-          <div class="unit"><span class="num" data-u="h">00</span><span class="lbl">horas</span></div>
-          <div class="unit"><span class="num" data-u="m">00</span><span class="lbl">min</span></div>
-          <div class="unit"><span class="num" data-u="s">00</span><span class="lbl">seg</span></div>
-        </div>
-
-        <div class="track"><span class="track-fill alt" id="aguiBar"></span></div>
+        <h1 class="hero-title"><span class="glow alt">Cuando Ueno libere los fondos</span></h1>
+        <p class="hero-phrase">El aguinaldo tampoco tiene fecha. Por ahora, solo recuerdos.</p>
       </div>
       <div class="hero-art">
         <div class="art-ring alt"></div>
-        <img src="img/nutria-aguinaldo.jpg" alt="Nutria festejando el aguinaldo" class="nutria" />
-        <span class="art-badge alt" id="aguiBadge">—</span>
+        <img src="img/nutria-aguinaldo.jpg" alt="Nutria sin aguinaldo" class="nutria" />
+        <span class="art-badge alt" id="aguiBadge">congelado</span>
       </div>
     </section>
-
   </main>
 
   <footer class="foot">
     <img src="img/nutria-chambeadora.jpg" alt="" class="foot-img" />
     <p>Nutrias Chambeadoras</p>
-    <span class="foot-mini">Aguantá, que ya falta menos · <span id="year"></span></span>
+    <span class="foot-mini">Aguantá, nutria · <span id="year"></span></span>
   </footer>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
