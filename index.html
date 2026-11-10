@@ -10,10 +10,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=8" />
 </head>
 <body>
   <div class="aurora"></div>
+
+  <div class="urgente"><i aria-hidden="true"></i> Última hora · Nutrias Chambeadoras</div>
+  <div class="ticker" aria-label="Avisos"><div>Sueldo congelado hasta nuevo aviso · Aguinaldo sin fecha · Las nutrias siguen chambeando · Aguantá, nutria · Sueldo congelado hasta nuevo aviso · Aguinaldo sin fecha</div></div>
 
   <!-- NAV -->
   <header class="nav">
@@ -26,65 +29,79 @@
     </button>
   </header>
 
-  <div class="tape" aria-hidden="true"></div>
-
   <main>
     <!-- INTERVENIDOS -->
-    <section id="intervenidos" class="hero hero-jail">
-      <div class="hero-copy">
-        <p class="eyebrow">Intervenidos</p>
-        <h1 class="hero-title" id="intervTitle">Llevamos <span class="glow" id="intervDiasBig">—</span> intervenidos</h1>
-        <p class="hero-phrase">Desde el martes 3 de noviembre de 2026, 03:24 (hora de Paraguay).  </p>
+    <section id="intervenidos" class="stage">
+      <div class="stage-copy">
+        <p class="eyebrow"><span class="live"></span> Intervenidos</p>
+        <h1 class="stage-title" id="intervTitle">Llevamos <span class="glow" id="intervDiasBig">—</span> intervenidos</h1>
+        <p class="stage-phrase">Desde el martes 3 de noviembre de 2026, 03:24 (hora de Paraguay).</p>
 
         <div class="count" id="intervCountdown">
-          <div class="unit"><span class="num" data-u="d">00</span><span class="lbl">días intervenidos</span></div>
-          <div class="unit"><span class="num" data-u="h">00</span><span class="lbl">horas intervenidas</span></div>
-          <div class="unit"><span class="num" data-u="m">00</span><span class="lbl">minutos intervenidos</span></div>
-          <div class="unit"><span class="num" data-u="s">00</span><span class="lbl">segundos intervenidos</span></div>
+          <div class="unit"><span class="num" data-u="d">00</span><span class="lbl">días</span></div>
+          <div class="unit"><span class="num" data-u="h">00</span><span class="lbl">horas</span></div>
+          <div class="unit"><span class="num" data-u="m">00</span><span class="lbl">minutos</span></div>
+          <div class="unit"><span class="num" data-u="s">00</span><span class="lbl">segundos</span></div>
         </div>
       </div>
-      <div class="hero-art jail">
-        <div class="art-ring"></div>
-        <img src="img/nutria-chambeadora.jpg" alt="Nutria tras las rejas" class="nutria" />
-        <span class="art-badge">tras las rejas</span>
+      <div class="stage-art">
+        <div class="bars" aria-hidden="true"></div>
+        <img src="img/miguel.png" alt="Miguel, intervenido" class="cutout" />
+        <span class="stamp">Intervenido</span>
       </div>
+      <div class="tape" aria-hidden="true"></div>
     </section>
 
-    <!-- SUELDO -->
-    <section id="sueldo" class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">Cuando cobramos</p>
-        <h1 class="hero-title"><span class="glow">Cuando Ueno libere los fondos</span></h1>
-        <p class="hero-phrase">El sueldo no tiene fecha. Sigue congelado hasta nuevo aviso.</p>
-      </div>
-      <div class="hero-art" id="cobroArt">
-        <div class="art-ring"></div>
-        <img src="img/nutria-chambeadora.jpg" alt="Nutria sin sueldo" class="nutria" id="cobroNutria" />
-        <span class="art-badge" id="cobroBadge">congelado</span>
-      </div>
-    </section>
+    <!-- SUELDO + AGUINALDO -->
+    <div class="duo">
+      <article id="sueldo" class="card">
+        <div class="card-art">
+          <img src="img/nutria-chambeadora.jpg" alt="Nutria sin sueldo" id="cobroNutria" />
+          <span class="pill" id="cobroBadge">❄ congelado</span>
+        </div>
+        <div class="card-body">
+          <p class="eyebrow">Cuando cobramos</p>
+          <h2 class="card-title">Cuando Ueno libere los fondos</h2>
+          <p class="card-text">El sueldo no tiene fecha. Sigue congelado hasta nuevo aviso.</p>
+        </div>
+      </article>
 
-    <!-- AGUINALDO -->
-    <section id="aguinaldo" class="hero reverse">
-      <div class="hero-copy">
-        <p class="eyebrow alt">El aguinaldo</p>
-        <h1 class="hero-title"><span class="glow alt">Cuando Ueno libere los fondos</span></h1>
-        <p class="hero-phrase">El aguinaldo tampoco tiene fecha. Por ahora, solo recuerdos.</p>
-      </div>
-      <div class="hero-art">
-        <div class="art-ring alt"></div>
-        <img src="img/nutria-aguinaldo.jpg" alt="Nutria sin aguinaldo" class="nutria" />
-        <span class="art-badge alt" id="aguiBadge">congelado</span>
-      </div>
-    </section>
+      <article id="aguinaldo" class="card alt">
+        <div class="card-art">
+          <img src="img/nutria-aguinaldo.jpg" alt="Nutria sin aguinaldo" />
+          <span class="pill" id="aguiBadge">❄ congelado</span>
+        </div>
+        <div class="card-body">
+          <p class="eyebrow alt">El aguinaldo</p>
+          <h2 class="card-title">Cuando Ueno libere los fondos</h2>
+          <p class="card-text">El aguinaldo tampoco tiene fecha. Por ahora, solo recuerdos.</p>
+        </div>
+      </article>
+    </div>
   </main>
 
   <footer class="foot">
     <img src="img/nutria-chambeadora.jpg" alt="" class="foot-img" />
     <p>Nutrias Chambeadoras</p>
     <span class="foot-mini">Aguantá, nutria · <span id="year"></span></span>
+    <a class="foot-link" href="https://www.bcp.gov.py/web/institucional/w/banco-central-inicia-el-procedimiento-de-resolucion-de-ueno-bank" target="_blank" rel="noopener noreferrer">Comunicado oficial del BCP</a>
   </footer>
 
-  <script src="app.js?v=4"></script>
+  <!-- MODAL BCP -->
+  <div id="bcpModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bcpTitle" hidden>
+    <div class="modal-card">
+      <button type="button" class="modal-close" id="bcpClose" aria-label="Cerrar aviso">&times;</button>
+      <div class="modal-logo">
+        <img src="img/bcp-logo.png" alt="Banco Central del Paraguay" id="bcpLogo" />
+        <span class="modal-logo-fallback" id="bcpLogoFallback" hidden>BCP</span>
+      </div>
+      <span class="modal-badge">Comunicado oficial</span>
+      <h2 id="bcpTitle" class="modal-title">Sitio en resolución</h2>
+      <a class="modal-link" href="https://www.bcp.gov.py/web/institucional/w/banco-central-inicia-el-procedimiento-de-resolucion-de-ueno-bank" target="_blank" rel="noopener noreferrer">Ver comunicado en bcp.gov.py</a><br />
+      <button type="button" class="modal-btn" id="bcpOk">Cerrar y ver el sitio</button>
+    </div>
+  </div>
+
+  <script src="app.js?v=5"></script>
 </body>
 </html>

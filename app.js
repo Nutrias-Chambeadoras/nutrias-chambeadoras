@@ -304,3 +304,27 @@ function init() {
   setInterval(tick, 1000);
 }
 document.addEventListener('DOMContentLoaded', init);
+
+// Modal BCP: se muestra al cargar y se puede cerrar
+(function () {
+  var modal = document.getElementById('bcpModal');
+  if (!modal) return;
+  var logo = document.getElementById('bcpLogo');
+  var fallback = document.getElementById('bcpLogoFallback');
+  if (logo && fallback) {
+    logo.addEventListener('error', function () {
+      logo.hidden = true;
+      fallback.hidden = false;
+    });
+  }
+  function cerrar() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  document.getElementById('bcpClose').addEventListener('click', cerrar);
+  document.getElementById('bcpOk').addEventListener('click', cerrar);
+  modal.addEventListener('click', function (e) { if (e.target === modal) cerrar(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+})();
