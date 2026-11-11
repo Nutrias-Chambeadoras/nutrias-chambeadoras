@@ -1,39 +1,114 @@
-name: CD - Deploy a Firebase Hosting
+name: CD - Deploy a Firebase
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
-
-# Un solo deploy a la vez; el ultimo gana
-concurrency:
-  group: firebase-hosting
-  cancel-in-progress: true
 
 # Minimo privilegio: solo leer el repo y pedir el token OIDC
 permissions:
   contents: read
   id-token: write
 
+env:
+  NODE_VERSION: 22
+  FIREBASE_TOOLS: firebase-tools@15.35.0
+
 jobs:
+  build:
+    name: Compilar y verificar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            functions/package-lock.json
+
+      - name: Instalar dependencias
+        run: |
+          npm ci
+          npm --prefix functions ci
+
+      - name: Compilar app (incluye chequeo de tipos)
+        run: npm run build
+        env:
+          # Clave publica VAPID de Cloud Messaging (variable del repo, no es secreta)
+          VITE_FCM_VAPID_KEY: ${{ vars.FCM_VAPID_KEY }}
+
+      - name: Compilar functions
+        run: npm --prefix functions run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 3
+
+  # Preview por PR (solo PRs del mismo repo: los forks no pueden pedir el token OIDC)
+  preview:
+    name: Preview del PR
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+      - name: Publicar canal de preview
+        run: >
+          npx --yes ${{ env.FIREBASE_TOOLS }} hosting:channel:deploy "pr-${{ github.event.pull_request.number }}"
+          --expires 7d --project "${{ vars.FIREBASE_PROJECT_ID }}" --non-interactive
+
   deploy:
+    name: Desplegar a produccion
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
     runs-on: ubuntu-latest
     environment: production
+    # Un solo deploy a la vez; el ultimo gana
+    concurrency:
+      group: firebase-production
+      cancel-in-progress: true
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - name: Instalar dependencias de functions
+        run: npm --prefix functions ci
 
-      # Autenticacion sin llaves: Workload Identity Federation (OIDC)
-      - name: Autenticar en Google Cloud
-        uses: google-github-actions/auth@v2
+      - uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
 
-      - name: Configurar Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Desplegar a Firebase Hosting
-        run: npx --yes firebase-tools@13 deploy --only hosting --project "${{ vars.FIREBASE_PROJECT_ID }}" --non-interactive
+      # Que se despliega: variable del repo FIREBASE_DEPLOY_ONLY.
+      # Por defecto solo hosting. Cuando el plan Blaze y los permisos esten listos:
+      # hosting,firestore,functions
+      - name: Desplegar
+        run: >
+          npx --yes ${{ env.FIREBASE_TOOLS }} deploy
+          --only "${{ vars.FIREBASE_DEPLOY_ONLY || 'hosting' }}"
+          --project "${{ vars.FIREBASE_PROJECT_ID }}" --non-interactive --force

@@ -1,13 +1,26 @@
-# Dependencias
+# Dependencias y builds
 node_modules/
+dist/
+dev-dist/
+functions/lib/
 
-# Sistema
+# Firebase
+.firebase/
+*-debug.log
+firebase-debug.*.log
+
+# Entorno local (nunca subir)
+.env
+.env.*
+!.env.example
+
+# Sistema y editor
 .DS_Store
 Thumbs.db
-
-# Editor
 .vscode/
 *.log
 
 # Temporales
-_old_bundle.js
+_*.txt
+_*.cmd
+_*.ps1
