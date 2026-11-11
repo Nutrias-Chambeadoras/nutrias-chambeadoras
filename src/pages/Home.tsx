@@ -78,7 +78,7 @@ function Tarjeta({ id, alt, eyebrow, foto, altFoto, badge, titulo, texto, objeti
 }
 
 export function Home() {
-  const { config, estado } = useSiteConfig();
+  const { config } = useSiteConfig();
   const ahora = useAhora();
   const conFechas = config.modo === 'contadores';
   const { sueldo, aguinaldo } = config;
@@ -172,7 +172,8 @@ export function Home() {
         )}
       </footer>
 
-      {estado !== 'cargando' && config.sebusca.visible && <ModalSeBusca titulo={config.sebusca.titulo} foto={config.sebusca.foto} />}
+      {/* El cartel aparece primero, sin esperar a Firestore. Si el admin lo apaga, se cierra al llegar la config. */}
+      {config.sebusca.visible && <ModalSeBusca titulo={config.sebusca.titulo} foto={config.sebusca.foto} />}
     </>
   );
 }
