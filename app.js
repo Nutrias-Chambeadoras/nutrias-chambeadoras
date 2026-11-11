@@ -317,12 +317,28 @@ document.addEventListener('DOMContentLoaded', init);
       fallback.hidden = false;
     });
   }
+  var wantedImg = document.getElementById('wantedImg');
+  var wantedEmpty = document.getElementById('wantedEmpty');
+  if (wantedImg && wantedEmpty) {
+    var sinFoto = function () {
+      wantedImg.hidden = true;
+      wantedEmpty.hidden = false;
+    };
+    wantedImg.addEventListener('error', sinFoto);
+    // si el error ocurrio antes de registrar el listener
+    if (wantedImg.complete && wantedImg.naturalWidth === 0) sinFoto();
+  }
   function cerrar() {
     modal.hidden = true;
     document.body.style.overflow = '';
   }
-  modal.hidden = false;
-  document.body.style.overflow = 'hidden';
+  function abrir() {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  abrir();
+  var abrirBtn = document.getElementById('bcpOpen');
+  if (abrirBtn) abrirBtn.addEventListener('click', abrir);
   document.getElementById('bcpClose').addEventListener('click', cerrar);
   document.getElementById('bcpOk').addEventListener('click', cerrar);
   modal.addEventListener('click', function (e) { if (e.target === modal) cerrar(); });

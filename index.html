@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=11" />
 </head>
 <body>
   <div class="aurora"></div>
@@ -30,6 +30,16 @@
   </header>
 
   <main>
+    <!-- AVISO BCP (integrado al sitio) -->
+    <aside class="bcp-banner" aria-label="Aviso del Banco Central del Paraguay">
+      <img src="img/bcp-logo.png" alt="" class="bcp-banner-logo" />
+      <div class="bcp-banner-text">
+        <strong>Sitio en resolución del BCP</strong>
+        <span>El Banco Central del Paraguay inició el procedimiento de resolución de ueno bank.</span>
+      </div>
+      <a class="bcp-banner-btn" href="https://www.bcp.gov.py/web/institucional/w/banco-central-inicia-el-procedimiento-de-resolucion-de-ueno-bank" target="_blank" rel="noopener noreferrer">Ver comunicado</a>
+    </aside>
+
     <!-- INTERVENIDOS -->
     <section id="intervenidos" class="stage">
       <div class="stage-copy">
@@ -87,21 +97,29 @@
     <a class="foot-link" href="https://www.bcp.gov.py/web/institucional/w/banco-central-inicia-el-procedimiento-de-resolucion-de-ueno-bank" target="_blank" rel="noopener noreferrer">Comunicado oficial del BCP</a>
   </footer>
 
-  <!-- MODAL BCP -->
-  <div id="bcpModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bcpTitle" hidden>
-    <div class="modal-card">
+  <!-- MODAL SE BUSCA -->
+  <div id="bcpModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="wantedTitle" hidden>
+    <div class="modal-card modal-wanted">
       <button type="button" class="modal-close" id="bcpClose" aria-label="Cerrar aviso">&times;</button>
-      <div class="modal-logo">
-        <img src="img/bcp-logo.png" alt="Banco Central del Paraguay" id="bcpLogo" />
-        <span class="modal-logo-fallback" id="bcpLogoFallback" hidden>BCP</span>
+      <div class="poster">
+        <i class="nail n1" aria-hidden="true"></i><i class="nail n2" aria-hidden="true"></i>
+        <i class="nail n3" aria-hidden="true"></i><i class="nail n4" aria-hidden="true"></i>
+        <div class="poster-inner">
+          <p class="poster-top">Orden de captura</p>
+          <h2 class="poster-big">SE BUSCA</h2>
+          <div class="poster-rule" aria-hidden="true"><span>&#9733;</span></div>
+          <div class="wanted-photo">
+            <img src="img/cesar.png" alt="Foto de la persona buscada" id="wantedImg" />
+            <span class="wanted-empty" id="wantedEmpty" hidden>Foto</span>
+          </div>
+          <p id="wantedTitle" class="poster-sub">CEO con orden de captura</p>
+          <div class="poster-rule" aria-hidden="true"><span>&#9733;</span></div>
+        </div>
       </div>
-      <span class="modal-badge">Comunicado oficial</span>
-      <h2 id="bcpTitle" class="modal-title">Sitio en resolución</h2>
-      <a class="modal-link" href="https://www.bcp.gov.py/web/institucional/w/banco-central-inicia-el-procedimiento-de-resolucion-de-ueno-bank" target="_blank" rel="noopener noreferrer">Ver comunicado en bcp.gov.py</a><br />
       <button type="button" class="modal-btn" id="bcpOk">Cerrar y ver el sitio</button>
     </div>
   </div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
