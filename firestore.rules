@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Admin = existe el documento admins/{uid}. Se crea a mano desde la consola.
+    function esAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Contenido del sitio: lo lee cualquiera, lo edita solo un admin
+    match /site/{documento} {
+      allow read: if true;
+      allow write: if esAdmin() && documento == 'config';
+    }
+
+    // Cada usuario puede ver si es admin; nadie puede darse permisos desde la app
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Historial de avisos: lo escribe la Cloud Function, lo leen los admins
+    match /avisos/{id} {
+      allow read: if esAdmin();
+      allow write: if false;
+    }
+
+    // Todo lo demás, cerrado
+    match /{ruta=**} {
+      allow read, write: if false;
+    }
+  }
+}

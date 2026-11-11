@@ -1,43 +1,64 @@
 # Nutrias Chambeadoras
 
-Cuenta regresiva para el día de cobro y el aguinaldo, con feriados de Paraguay y notificaciones del navegador.
+PWA instalable con contador de intervención, sueldo y aguinaldo, panel admin y avisos push.
 
-## Qué hace
+## Stack
 
-- **Contador de cobro**: días, horas, minutos y segundos hasta el próximo sueldo.
-- **Contador de aguinaldo**: lo mismo apuntando a diciembre.
-- **Feriados de Paraguay**: se usan para ajustar la fecha de cobro (si cae feriado o fin de semana, se adelanta al día hábil anterior).
-- **Notificaciones**: avisos del navegador a los 3 días, 1 día y el mismo día del cobro; y a los 7 días y el día del aguinaldo. Funcionan mientras la pestaña esté abierta.
+- **App:** Vite + React + TypeScript (`src/`), PWA con `vite-plugin-pwa`.
+- **Datos:** Firestore, documento `site/config`. Lo lee cualquiera y lo edita solo un admin.
+- **Admin:** `/admin`, login con Google. Admin es quien tenga un documento `admins/{uid}`.
+- **Avisos push:** Firebase Cloud Messaging. Las Cloud Functions `suscribir` y `enviarAviso` están en `functions/`.
+- **Hosting:** Firebase Hosting. La config web se lee de `/__/firebase/init.json`, sin claves en el repo.
 
-## Estructura
+## Cómo se evita la versión vieja en caché
 
-```
-index.html      · estructura del sitio
-styles.css      · estilos (tema oscuro + turquesa)
-app.js          · lógica de contadores, feriados y notificaciones
-feriados.json   · referencia de feriados (los usados están incrustados en app.js)
-img/            · imágenes de las nutrias
-```
+- `index.html`, `sw.js` y los JSON se sirven con `no-cache` (ver `firebase.json`).
+- JS y CSS llevan hash en el nombre y se cachean un año: cada versión tiene archivos nuevos.
+- El service worker pide el HTML a la red primero, se activa solo cuando hay versión nueva y recarga la página.
+- El contenido no está en archivos: llega en vivo desde Firestore.
 
-## Correr en local
+## Desarrollo local
 
-Es un sitio estático. Abrí `index.html` con doble clic, o serví la carpeta con cualquier servidor estático.
+Requiere Node 22 o superior.
 
-## Publicación
-
-Se despliega solo a **GitHub Pages** con GitHub Actions en cada push a `main`
-(ver `.github/workflows/deploy.yml`).
-
-## Configurar fechas
-
-Las fechas de cobro y aguinaldo están fijas en `app.js`, en la constante `DEFAULTS`
-al inicio del archivo:
-
-```js
-const DEFAULTS = { payDay: 30, payShift: 'before', aguiMonth: 11, aguiDay: 16 };
+```bash
+npm install
+npm --prefix functions install
+npm run dev
 ```
 
-- `payDay`: día del mes en que se cobra.
-- `payShift`: `before` (adelantar), `after` (posponer) o `none` (dejar igual) si cae feriado/finde.
-- `aguiMonth`: mes del aguinaldo (0 = enero … 11 = diciembre).
-- `aguiDay`: día del aguinaldo.
+En local no existe `/__/firebase/init.json`. Creá un `.env.local` (no se sube) con:
+
+```
+VITE_FIREBASE_CONFIG={"apiKey":"...","authDomain":"...","projectId":"prod-nutrias-chambeadoras","appId":"...","messagingSenderId":"..."}
+VITE_FCM_VAPID_KEY=...
+```
+
+## Deploy
+
+GitHub Actions (`.github/workflows/cd.yml`):
+
+- **Push a `main`:** compila, chequea tipos y despliega.
+- **Pull requests:** canal de preview que dura 7 días.
+- **Autenticación:** Workload Identity Federation, sin llaves (ver `scripts/setup-gcp-wif.sh`).
+
+Variables del repo:
+
+| Variable | Valor |
+| --- | --- |
+| `FIREBASE_PROJECT_ID` | `prod-nutrias-chambeadoras` |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | ya cargada |
+| `GCP_SERVICE_ACCOUNT` | ya cargada |
+| `FCM_VAPID_KEY` | clave pública de Cloud Messaging |
+| `FIREBASE_DEPLOY_ONLY` | `hosting` (por defecto) o `hosting,firestore,functions` |
+
+## Puesta en marcha (una sola vez)
+
+1. **App web:** en la consola de Firebase, Configuración del proyecto, que exista una app web registrada.
+2. **Firestore:** crear la base de datos, si no existe.
+3. **Login:** en Authentication, habilitar el proveedor Google.
+4. **Plan Blaze:** necesario para Cloud Functions.
+5. **Clave VAPID:** en Cloud Messaging, Certificados web push, generar el par de claves. La pública va en la variable `FCM_VAPID_KEY`.
+6. **Permisos:** correr de nuevo `scripts/setup-gcp-wif.sh`, que suma los permisos para reglas y functions.
+7. **Deploy completo:** poner `FIREBASE_DEPLOY_ONLY=hosting,firestore,functions` y hacer push.
+8. **Primer admin:** entrar a `/admin` con Google. La página muestra tu UID. Crear en Firestore el documento `admins/<tu UID>` y recargar.

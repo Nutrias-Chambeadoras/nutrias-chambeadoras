@@ -25,6 +25,13 @@ gcloud services enable \
   sts.googleapis.com \
   cloudresourcemanager.googleapis.com \
   firebasehosting.googleapis.com \
+  firestore.googleapis.com \
+  firebaserules.googleapis.com \
+  fcm.googleapis.com \
+  cloudfunctions.googleapis.com \
+  run.googleapis.com \
+  cloudbuild.googleapis.com \
+  artifactregistry.googleapis.com \
   --project "${PROJECT_ID}"
 
 echo "2/6 Cuenta de servicio ${SA_EMAIL}"
@@ -48,8 +55,21 @@ retry() {
   done
 }
 
-echo "3/6 Roles minimos para publicar en Hosting"
-for ROLE in roles/firebasehosting.admin roles/serviceusage.serviceUsageConsumer; do
+echo "3/6 Roles para publicar Hosting, reglas de Firestore y Cloud Functions"
+# Hosting: firebasehosting.admin
+# Firestore: firebaserules.admin (reglas) + datastore.indexAdmin (indices)
+# Functions 2a gen: cloudfunctions.developer, run.admin (acceso publico de las callables),
+#   artifactregistry.admin (politica de limpieza de imagenes), iam.serviceAccountUser
+#   (desplegar con la cuenta de ejecucion por defecto)
+for ROLE in \
+  roles/firebasehosting.admin \
+  roles/serviceusage.serviceUsageConsumer \
+  roles/firebaserules.admin \
+  roles/datastore.indexAdmin \
+  roles/cloudfunctions.developer \
+  roles/run.admin \
+  roles/artifactregistry.admin \
+  roles/iam.serviceAccountUser; do
   retry gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
     --member "serviceAccount:${SA_EMAIL}" \
     --role "${ROLE}" \
