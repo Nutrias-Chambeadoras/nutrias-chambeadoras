@@ -14,6 +14,12 @@ export function useSiteConfig(): { config: SiteConfig; estado: EstadoCarga } {
     let cancelado = false;
     let desuscribir: (() => void) | undefined;
 
+    // Si Firestore no responde (sin conexión, base inexistente), Firestore reintenta en
+    // silencio. No dejamos el sitio esperando: seguimos con los textos por defecto.
+    const espera = window.setTimeout(() => {
+      setEstado((actual) => (actual === 'cargando' ? 'error' : actual));
+    }, 4000);
+
     getFirebaseApp()
       .then((app) => {
         if (cancelado) return;
@@ -32,6 +38,7 @@ export function useSiteConfig(): { config: SiteConfig; estado: EstadoCarga } {
 
     return () => {
       cancelado = true;
+      window.clearTimeout(espera);
       desuscribir?.();
     };
   }, []);
